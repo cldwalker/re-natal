@@ -134,13 +134,17 @@ function importJs(src, success, error) {
 function interceptRequire() {
     var oldRequire = window.require;
     console.info("Shimming require");
-    window.require = function (id) {
+    var newRequire = function (id) {
         console.info("Requiring: " + id);
+        if (id === "react"){
+            return newRequire("react-native");
+        }
         if (externalModules[id]) {
             return externalModules[id];
         }
         return oldRequire(id);
     };
+    window.require = newRequire;
 }
 
 // do not show debug messages in yellow box
